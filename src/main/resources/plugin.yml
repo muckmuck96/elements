@@ -1,0 +1,7 @@
+name: Elements
+version: '${project.version}'
+main: de.muckmuck96.elements.Elements
+api-version: '1.21'
+load: STARTUP
+authors: [muckmuck96]
+description: A compact library providing coupsled useful elements to develop
