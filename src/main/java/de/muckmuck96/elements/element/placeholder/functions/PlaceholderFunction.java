@@ -7,7 +7,7 @@ import de.muckmuck96.elements.element.placeholder.classes.Bundle;
  *
  * @param <T> the return type of the placeholder value
  */
-public abstract class PlaceholderFunction<T> {
-
-    public abstract T run(Bundle bundle);
+@FunctionalInterface
+public interface PlaceholderFunction<T> {
+    T run(Bundle bundle);
 }
