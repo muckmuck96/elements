@@ -47,7 +47,7 @@ public class PlaceholderRegistry extends ElementRegistry {
      * @param key the placeholder key (e.g., "{player_name}")
      * @param function the function to generate the replacement value
      */
-    public void register(String key, PlaceholderFunction<?> function) {
+    public <T> void register(String key, PlaceholderFunction<T> function) {
         manager.register(plugin, key, function);
         registeredKeys.add(key);
     }
@@ -58,7 +58,7 @@ public class PlaceholderRegistry extends ElementRegistry {
      * @param keys the placeholder keys
      * @param function the function to generate the replacement values
      */
-    public void register(List<String> keys, PlaceholderFunction<?> function) {
+    public <T> void register(List<String> keys, PlaceholderFunction<T> function) {
         manager.register(plugin, keys, function);
         registeredKeys.addAll(keys);
     }
@@ -70,7 +70,7 @@ public class PlaceholderRegistry extends ElementRegistry {
      * @param function the function to generate the replacement values
      * @param cleanup whether to clean up unreplaced keys
      */
-    public void register(List<String> keys, PlaceholderFunction<?> function, boolean cleanup) {
+    public <T> void register(List<String> keys, PlaceholderFunction<T> function, boolean cleanup) {
         manager.register(plugin, keys, function, cleanup);
         registeredKeys.addAll(keys);
     }
@@ -81,7 +81,7 @@ public class PlaceholderRegistry extends ElementRegistry {
      * @param key the placeholder key
      * @param function the function to generate the replacement value
      */
-    public void registerGlobal(String key, PlaceholderFunction<?> function) {
+    public <T> void registerGlobal(String key, PlaceholderFunction<T> function) {
         manager.register(key, function);
         registeredGlobalKeys.add(key);
     }
@@ -92,7 +92,7 @@ public class PlaceholderRegistry extends ElementRegistry {
      * @param keys the placeholder keys
      * @param function the function to generate the replacement values
      */
-    public void registerGlobal(List<String> keys, PlaceholderFunction<?> function) {
+    public <T> void registerGlobal(List<String> keys, PlaceholderFunction<T> function) {
         manager.register(keys, function);
         registeredGlobalKeys.addAll(keys);
     }
@@ -104,7 +104,7 @@ public class PlaceholderRegistry extends ElementRegistry {
      * @param function the function to generate the replacement values
      * @param cleanup whether to clean up unreplaced keys
      */
-    public void registerGlobal(List<String> keys, PlaceholderFunction<?> function, boolean cleanup) {
+    public <T> void registerGlobal(List<String> keys, PlaceholderFunction<T> function, boolean cleanup) {
         manager.register(keys, function, cleanup);
         registeredGlobalKeys.addAll(keys);
     }

@@ -24,7 +24,7 @@ public class PlaceholderManager {
     }
 
 
-    public void register(Plugin plugin, String key, PlaceholderFunction<?> pb) {
+    public <T> void register(Plugin plugin, String key, PlaceholderFunction<T> pb) {
         Placeholder placeholder = new Placeholder.Builder().withKey(key).withPlaceholderFunction(pb).build();
         List<Placeholder> pluginPlaceholders = placeholderList.computeIfAbsent(plugin, k -> new CopyOnWriteArrayList<>());
 
@@ -39,7 +39,7 @@ public class PlaceholderManager {
         Bukkit.getLogger().info("Private Placeholder " + displayKey + " registered");
     }
 
-    public void register(String key, PlaceholderFunction<?> pb) {
+    public <T> void register(String key, PlaceholderFunction<T> pb) {
         Placeholder placeholder = new Placeholder.Builder().withKey(key).withPlaceholderFunction(pb).build();
         for (Placeholder iph : globalPlaceholderList) {
             if (placeholder.getKey().equals(iph.getKey())) {
@@ -52,15 +52,15 @@ public class PlaceholderManager {
         Bukkit.getLogger().info("Global Placeholder " + displayKey + " registered");
     }
 
-    public void register(Plugin plugin, List<String> keys, PlaceholderFunction<?> pb) {
+    public <T> void register(Plugin plugin, List<String> keys, PlaceholderFunction<T> pb) {
         this.register(plugin, keys, pb, false);
     }
 
-    public void register(List<String> keys, PlaceholderFunction<?> pb) {
+    public <T> void register(List<String> keys, PlaceholderFunction<T> pb) {
         this.register(keys, pb, false);
     }
 
-    public void register(Plugin plugin, List<String> keys, PlaceholderFunction<?> pb, boolean cleanup) {
+    public <T> void register(Plugin plugin, List<String> keys, PlaceholderFunction<T> pb, boolean cleanup) {
         Placeholder placeholder = new Placeholder.Builder().withKeys(keys).withPlaceholderFunction(pb).withCleanup(cleanup).build();
         List<Placeholder> pluginPlaceholders = placeholderList.computeIfAbsent(plugin, k -> new CopyOnWriteArrayList<>());
 
@@ -73,7 +73,7 @@ public class PlaceholderManager {
         Bukkit.getLogger().info("Private Placeholder/s " + placeholder.getKeys() + " registered");
     }
 
-    public void register(List<String> keys, PlaceholderFunction<?> pb, boolean cleanup) {
+    public <T> void register(List<String> keys, PlaceholderFunction<T> pb, boolean cleanup) {
         Placeholder placeholder = new Placeholder.Builder().withKeys(keys).withPlaceholderFunction(pb).withCleanup(cleanup).build();
 
         List<String> filteredKeys = new ArrayList<>(placeholder.getKeys());
