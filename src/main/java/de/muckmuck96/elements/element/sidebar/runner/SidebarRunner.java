@@ -4,6 +4,7 @@ import de.muckmuck96.elements.element.sidebar.BoardHolder;
 import de.muckmuck96.elements.element.sidebar.BoardPage;
 import de.muckmuck96.elements.element.sidebar.SidebarHolder;
 import de.muckmuck96.elements.element.sidebar.listener.PlayerListener;
+import de.muckmuck96.elements.registry.element.PlaceholderRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -23,6 +24,7 @@ public class SidebarRunner extends BukkitRunnable {
     private final SidebarHolder sidebarHolder;
     private final boolean longLine;
     private boolean isDefault;
+    private PlaceholderRegistry placeholderRegistry;
 
     public SidebarRunner(Plugin plugin, SidebarHolder sidebarHolder) {
         this(plugin, sidebarHolder, true);
@@ -39,8 +41,21 @@ public class SidebarRunner extends BukkitRunnable {
 
         List<String> lines = sidebarHolder.lines();
         int interval = sidebarHolder.interval();
-        this.boardPage = new BoardPage(lines, interval);
 
+        // First line is the title
+        if (!lines.isEmpty()) {
+            this.boardPage = new BoardPage(List.of(lines.get(0)), interval);
+
+            // Remaining lines are the content
+            for (int i = 1; i < lines.size(); i++) {
+                BoardPage page = new BoardPage(List.of(lines.get(i)), interval);
+                this.boardPages.add(page);
+            }
+        } else {
+            this.boardPage = new BoardPage(List.of(""), interval);
+        }
+
+        // Also add any nested sidebar holders (for animated content)
         for (SidebarHolder subSidebarHolder : sidebarHolder.sidebarHolders()) {
             BoardPage page = new BoardPage(subSidebarHolder.lines(), subSidebarHolder.interval());
             this.boardPages.add(page);
@@ -88,6 +103,21 @@ public class SidebarRunner extends BukkitRunnable {
 
     public void unregisterHolder(Player player) {
         holders.removeIf(holder -> holder.getPlayer().equals(player));
+    }
+
+    public PlaceholderRegistry getPlaceholderRegistry() {
+        return placeholderRegistry;
+    }
+
+    public void setPlaceholderRegistry(PlaceholderRegistry placeholderRegistry) {
+        this.placeholderRegistry = placeholderRegistry;
+    }
+
+    public void destroy() {
+        for (BoardHolder holder : holders) {
+            holder.destroy();
+        }
+        holders.clear();
     }
 
     @Override

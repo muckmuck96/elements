@@ -21,35 +21,50 @@ SidebarHolder holder = new SidebarHolder(
     20  // Update interval (ticks)
 );
 
-SidebarRunner runner = sidebars.newRunner(holder, true);  // true = default sidebar
+sidebars.register(holder);  // Registers as default sidebar (shown to all players)
 ```
 
-## Animated Content
+## Placeholder Support
+
+To use placeholders in sidebars, set the PlaceholderRegistry on the SidebarRegistry:
 
 ```java
-SidebarHolder page1 = new SidebarHolder(List.of("&aOnline: 50"), 40);
-SidebarHolder page2 = new SidebarHolder(List.of("&bTPS: 20.0"), 40);
+PlaceholderRegistry placeholders = registry.enable(PlaceholderRegistry.class);
+SidebarRegistry sidebars = registry.enable(SidebarRegistry.class);
 
-SidebarHolder main = new SidebarHolder(
-    List.of("&6Server Stats"),
-    20,
-    page1, page2  // Cycles between these
-);
+// Register placeholders
+placeholders.register("{player}", bundle -> {
+    Player player = bundle.getItem(Player.class);
+    return player != null ? player.getName() : "Unknown";
+});
+
+// Set placeholder support for sidebars
+sidebars.setPlaceholderRegistry(placeholders);
+
+// Create and register sidebar
+SidebarHolder holder = new SidebarHolder(...);
+sidebars.register(holder);
 ```
 
-## Managing Players
+## Managing Sidebars
 
 ```java
-List<BoardHolder> holders = runner.getHolders();
-runner.unregisterHolder(player);
+// Register a sidebar (default = shown to all players)
+sidebars.register(holder);
+
+// Register non-default sidebar
+sidebars.register(holder, false);
+
+// Check if registered
+boolean active = sidebars.isRegistered(holder);
+
+// Unregister a specific sidebar
+sidebars.unregister(holder);
 ```
 
 ## Cleanup
 
 ```java
-sidebars.removeRunner(runner);
-runner.cancel();
-
 @Override
 public void onDisable() {
     sidebars.clearRunners();
