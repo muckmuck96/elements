@@ -22,4 +22,8 @@ public class MenuClickEvent extends InventoryClickEvent {
     public @NotNull HandlerList getHandlers() {
         return handlerList;
     }
+
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
 }

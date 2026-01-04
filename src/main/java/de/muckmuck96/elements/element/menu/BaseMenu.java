@@ -3,6 +3,7 @@ package de.muckmuck96.elements.element.menu;
 import de.muckmuck96.elements.Elements;
 import de.muckmuck96.elements.registry.element.MenuRegistry;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -91,10 +92,11 @@ public abstract class BaseMenu implements Listener {
     }
 
     private void createInventory() {
+        Component title = LegacyComponentSerializer.legacyAmpersand().deserialize(name);
         if (events.length == HOPPER_SIZE) {
-            this.inventory = Bukkit.createInventory(holder, InventoryType.HOPPER, Component.text(name));
+            this.inventory = Bukkit.createInventory(holder, InventoryType.HOPPER, title);
         } else {
-            this.inventory = Bukkit.createInventory(holder, events.length, Component.text(name));
+            this.inventory = Bukkit.createInventory(holder, events.length, title);
         }
         holder.setInventory(this.inventory);
 

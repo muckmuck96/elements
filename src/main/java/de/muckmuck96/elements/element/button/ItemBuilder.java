@@ -63,7 +63,7 @@ public class ItemBuilder {
 
     public ItemBuilder name(String name) {
         ensureMeta();
-        itemMeta.displayName(LegacyComponentSerializer.legacySection().deserialize(name).decoration(TextDecoration.ITALIC, false));
+        itemMeta.displayName(LegacyComponentSerializer.legacyAmpersand().deserialize(name).decoration(TextDecoration.ITALIC, false));
         return this;
     }
 
@@ -102,7 +102,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder lore(String lore) {
-        this.lore(Component.text(lore));
+        this.lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(lore).decoration(TextDecoration.ITALIC, false));
         return this;
     }
 
@@ -119,7 +119,9 @@ public class ItemBuilder {
     }
 
     public ItemBuilder lore(List<String> lore) {
-        this.lore = lore.stream().map(Component::text).collect(Collectors.toList());
+        this.lore = lore.stream()
+                .map(s -> LegacyComponentSerializer.legacyAmpersand().deserialize(s).decoration(TextDecoration.ITALIC, false))
+                .collect(Collectors.toList());
         return this;
     }
 
