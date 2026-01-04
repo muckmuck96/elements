@@ -1,7 +1,10 @@
 package de.muckmuck96.elements.element.metadata;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -62,6 +65,9 @@ public final class DataHandler {
                 .addModule(locationModule)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
+                .visibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+                .visibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PUBLIC_ONLY)
+                .visibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PUBLIC_ONLY)
                 .build();
 
         YAML_MAPPER = JsonMapper.builder(new YAMLFactory())
@@ -70,6 +76,9 @@ public final class DataHandler {
                 .addModule(locationModule)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
+                .visibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+                .visibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PUBLIC_ONLY)
+                .visibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PUBLIC_ONLY)
                 .build();
     }
 
@@ -171,7 +180,8 @@ public final class DataHandler {
             Class<?> clazz = e.getKey();
             Cached cached = e.getValue();
             MetadataInfo info = registry.get(clazz);
-            if (info == null || info.pattern || !info.editable) continue;
+            // Skip: null info, pattern-based, not editable, or config (user-managed)
+            if (info == null || info.pattern || !info.editable || info.config) continue;
             Path file = resolveFile(info, null);
             saveGeneric(info, cached.value, null, file);
 
@@ -183,7 +193,8 @@ public final class DataHandler {
         for (Map.Entry<Class<?>, Map<String, Cached>> entry : patternInstances.entrySet()) {
             Class<?> clazz = entry.getKey();
             MetadataInfo info = registry.get(clazz);
-            if (info == null || !info.pattern || !info.editable) continue;
+            // Skip: null info, not pattern-based, not editable, or config (user-managed)
+            if (info == null || !info.pattern || !info.editable || info.config) continue;
 
             Map<String, Cached> perId = entry.getValue();
             for (Map.Entry<String, Cached> idEntry : perId.entrySet()) {
@@ -447,6 +458,7 @@ public final class DataHandler {
             Files.createDirectories(filePath.getParent());
             ObjectMapper mapper = mapperFor(info.type);
             if(!Files.exists(filePath)) {
+                // File doesn't exist - create with defaults
                 Object def = newDefault(info.clazz);
                 validateMetadataObject(def);
                 if(info.editable) {
@@ -454,13 +466,14 @@ public final class DataHandler {
                 }
                 return def;
             }
-            Object defaults = newDefault(info.clazz);
-            Object merged = mapper.readerForUpdating(defaults).readValue(filePath.toFile());
-            validateMetadataObject(merged);
+            // File exists - read directly (Jackson uses field defaults for missing properties)
+            Object loaded = mapper.readValue(filePath.toFile(), info.clazz);
+            validateMetadataObject(loaded);
             if(info.autoMigrate && info.editable) {
-                mapper.writerWithDefaultPrettyPrinter().writeValue(filePath.toFile(), merged);
+                // Only re-save to add new fields that don't exist in the file yet
+                mapper.writerWithDefaultPrettyPrinter().writeValue(filePath.toFile(), loaded);
             }
-            return merged;
+            return loaded;
         } catch (IOException e) {
             throw new RuntimeException("Failed to load " + info.type + " for " + info.clazz.getName() + " (id=" + idOrNull + ")", e);
         }
