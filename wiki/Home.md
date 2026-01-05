@@ -64,11 +64,11 @@ public class MyPlugin extends JavaPlugin {
 
 ## Documentation
 
-- [Registry System](wiki/Registry.md)
-- [Buttons](wiki/Buttons.md)
-- [Menus](wiki/Menus.md)
-- [Sidebars](wiki/Sidebars.md)
-- [Countdowns](wiki/Countdowns.md)
-- [Data Persistence](wiki/Data-Persistence.md)
-- [Placeholders](wiki/Placeholders.md)
+- [Registry System](https://github.com/muckmuck96/elements/blob/master/wiki/Registry.md)
+- [Buttons](https://github.com/muckmuck96/elements/blob/master/wiki/Buttons.md)
+- [Menus](https://github.com/muckmuck96/elements/blob/master/wiki/Menus.md)
+- [Sidebars](https://github.com/muckmuck96/elements/blob/master/wiki/Sidebars.md)
+- [Countdowns](https://github.com/muckmuck96/elements/blob/master/wiki/Countdowns.md)
+- [Data Persistence](https://github.com/muckmuck96/elements/blob/master/wiki/Data-Persistence.md)
+- [Placeholders](https://github.com/muckmuck96/elements/blob/master/wiki/Placeholders.md)
 - [Utilities](wiki/Utilities.md)
